@@ -2,8 +2,11 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
-// TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
-// TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined.
+// Workshop Part 1: import your db connection from ./db once it's wired up.
+const dbConnection = require("./db");
+
+// Workshop Part 2: import your Book model from ./models/Book once it's defined.
+const Book = require("./models/book");
 
 const app = express();
 const PORT = 8080;
@@ -36,8 +39,9 @@ app.get("/", (request, response) => {
 
 // Part 3: GET all books
 // TODO: Workshop: swap `books` for the Book method that returns every row.
-app.get("/api/books", (request, response, next) => {
+app.get("/api/books", async (request, response, next) => {
   try {
+    const books = await Book.findAll();   // <-- the method that returns all rows
     response.json(books);
   } catch (error) {
     next(error);
@@ -142,7 +146,7 @@ async function startApp() {
   // TODO: Workshop Part 3: this is where your table gets created from the Book
   // model. Call the sync method on your db connection and await it — the
   // table must exist before app.listen lets any request in.
-
+  await Book.sync();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
