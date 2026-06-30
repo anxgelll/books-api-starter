@@ -1,7 +1,22 @@
-const Book = require("./book");
-const Review = require("./review");
+const { DataTypes } = require('sequelize');
+const dbConnection = require('../db')
 
-Book.hasMany(Review);    
-Review.belongsTo(Book); 
+const Review = dbConnection.define('review', {
+    reviewer: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    rating: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    comment: {
+        type: DataTypes.TEXT
+    },
+    bookId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+})
 
-module.exports = { Book, Review };
+module.exports = Review;

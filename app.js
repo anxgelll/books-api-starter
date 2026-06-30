@@ -43,7 +43,7 @@ app.get("/api/books", async (request, response, next) => {
 app.get("/api/books/:id", async (request, response, next) => {
   try {
     const id = Number(request.params.id); // request.params.id is always a string — Number() makes it comparable
-    const book = await Book.findByPk(id);
+    const book = await Book.findByPk(id, { include: Review });   // <-- the method that looks up by primary key
 
     if (!book) {
       return response.sendStatus(404);
@@ -113,7 +113,19 @@ app.delete("/api/books/:id", async (request, response, next) => {
     next(error);
   }
 });
-
+app.post("/api/books/:bookId/reviews", async (request, response, next) => {
+  try {
+      const newReview = await Review.create({
+      reviewer: request.body.reviewer,
+      rating: request.body.rating,
+      comment: request.body.comment,
+      bookId: request.params.bookId
+    });
+    response.status(201).json(newReview);
+  } catch (error) {
+    next(error);
+  }
+});
 // TODO: Workshop cleanup: once all five routes above use Book instead of `books`,
 // delete the `books` array and `nextId` variable up top — nothing should
 // reference them anymore.
